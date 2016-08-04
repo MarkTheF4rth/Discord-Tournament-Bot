@@ -12,13 +12,11 @@ class Main:
         self.out_messages = []
    
     def message_handler(self):
-        print('message handler is running')
         for message in self.in_messages:
-            print('Processed message: ', message.content)
+            print('Processed message: ', message.content, message.channel)
 
 @client.event
 async def on_message(message):
-    print('Incoming message: ', message.content)
     if message.content.lstrip().startswith(MAIN.config['command_char']): #removes leading spaces and checks that the message begins with the command character
         MAIN.in_messages.append(message)
     
@@ -35,14 +33,14 @@ async def on_ready():
     print('-----')
 
 async def main_loop(main):
-    print('loop running')
+    await asyncio.sleep(1)
+    await client.send_message(main.config['message'].channel, 'I have restarted')
     while not client.is_closed:
-        await asyncio.sleep(1)
         main.message_handler()
+        await asyncio.sleep(1)
 
 MAIN = Main()
 if __name__ == '__main__':
-    print('hello')
     if not os.path.isfile('token.txt'):
         print('There is no token file present, make sure your file is named "token.txt"')
         sys.exit()
